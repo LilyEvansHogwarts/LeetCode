@@ -1,5 +1,5 @@
 #include<vector>
-#include<queue>
+#include<algorithm>
 #include<iostream>
 #define xlength 5
 #define ylength 6
@@ -28,46 +28,30 @@ bool operator< (const pair<int, pair<int, int>>& p1, const pair<int, pair<int, i
 void dfs(vector<vector<int>>& visited, vector<vector<int>>& degree, int x, int y, int num, int& solutions, vector<vector<vector<int>>>& res) {
     num++;
     visited[x][y] = num;
+    auto comp = [](const pair<int, pair<int, int>>& p1, const pair<int, pair<int, int>>& p2) {
+	return p1.first < p2.first;
+    };
     if(num < xlength * ylength) {
-	int k = 8;
-	priority_queue<pair<int,pair<int, int>>, vector<pair<int, pair<int, int>>>, greater<pair<int, pair<int, int>>>> q;
-	if(isValid(visited, x+1, y+2) && degree[x+1][y+2]) {
-	    k = min(k, degree[x+1][y+2]);
-	    q.push(make_pair(degree[x+1][y+2], make_pair(x+1, y+2)));
-	}
-	if(isValid(visited, x+1, y-2) && degree[x+1][y-2]) {
-	    k = min(k, degree[x+1][y-2]);
-	    q.push(make_pair(degree[x+1][y-2], make_pair(x+1, y-2)));
-	}
-	if(isValid(visited, x-1, y+2) && degree[x-1][y+2]) {
-	    k = min(k, degree[x-1][y+2]);
-	    q.push(make_pair(degree[x-1][y+2], make_pair(x-1, y+2)));
-	}
-	if(isValid(visited, x-1, y-2) && degree[x-1][y-2]) {
-	    k = min(k, degree[x-1][y-2]);
-	    q.push(make_pair(degree[x-1][y-2], make_pair(x-1, y-2)));
-	}
-	if(isValid(visited, x+2, y+1) && degree[x+2][y+1]) {
-	    k = min(k, degree[x+2][y+1]);
-	    q.push(make_pair(degree[x+2][y+1], make_pair(x+2, y+1)));
-	}
-	if(isValid(visited, x+2, y-1) && degree[x+2][y-1]) {
-	    k = min(k, degree[x+2][y-1]);
-	    q.push(make_pair(degree[x+2][y-1], make_pair(x+2, y-1)));
-	}
-	if(isValid(visited, x-2, y+1) && degree[x-2][y+1]) {
-	    k = min(k, degree[x-2][y+1]);
-	    q.push(make_pair(degree[x-2][y+1], make_pair(x-2, y+1)));
-	}
-	if(isValid(visited, x-2, y-1) && degree[x-2][y-1]) {
-	    k = min(k, degree[x-2][y-1]);
-	    q.push(make_pair(degree[x-2][y-1], make_pair(x-2, y-1)));
-	}
-	while(!q.empty()) {
-	    pair<int, pair<int, int>> temp = q.top();
-	    q.pop();
-	    dfs(visited, degree, temp.second.first, temp.second.second, num, solutions, res);
-	}
+	vector<pair<int, pair<int, int>>> q;
+	if(isValid(visited, x+1, y+2) && degree[x+1][y+2]) 
+	    q.push_back(make_pair(degree[x+1][y+2], make_pair(x+1, y+2)));
+	if(isValid(visited, x+1, y-2) && degree[x+1][y-2]) 
+	    q.push_back(make_pair(degree[x+1][y-2], make_pair(x+1, y-2)));
+	if(isValid(visited, x-1, y+2) && degree[x-1][y+2]) 
+	    q.push_back(make_pair(degree[x-1][y+2], make_pair(x-1, y+2)));
+	if(isValid(visited, x-1, y-2) && degree[x-1][y-2]) 
+	    q.push_back(make_pair(degree[x-1][y-2], make_pair(x-1, y-2)));
+	if(isValid(visited, x+2, y+1) && degree[x+2][y+1]) 
+	    q.push_back(make_pair(degree[x+2][y+1], make_pair(x+2, y+1)));
+	if(isValid(visited, x+2, y-1) && degree[x+2][y-1]) 
+	    q.push_back(make_pair(degree[x+2][y-1], make_pair(x+2, y-1)));
+	if(isValid(visited, x-2, y+1) && degree[x-2][y+1]) 
+	    q.push_back(make_pair(degree[x-2][y+1], make_pair(x-2, y+1)));
+	if(isValid(visited, x-2, y-1) && degree[x-2][y-1]) 
+	    q.push_back(make_pair(degree[x-2][y-1], make_pair(x-2, y-1)));
+	sort(q.begin(), q.end(), comp);
+	for(auto qq:q) 
+	    dfs(visited, degree, qq.second.first, qq.second.second, num, solutions, res);
     } else if((abs(x - start_x) == 2 && abs(y - start_y) == 1) || (abs(x - start_x) == 1 && abs(y - start_y) == 2)) {
 	res.push_back(visited);
 	show_vector_vector(visited);
